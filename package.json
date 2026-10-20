@@ -1,0 +1,37 @@
+{
+  "name": "library_api",
+  "version": "1.0.0",
+  "description": "Library project task for a class",
+  "keywords": [
+    "Nodejs",
+    "Library",
+    "Backend",
+    "Web_API"
+  ],
+  "homepage": "https://github.com/horvathdanielgabor/Library_API#readme",
+  "bugs": {
+    "url": "https://github.com/horvathdanielgabor/Library_API/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/horvathdanielgabor/Library_API.git"
+  },
+  "license": "ISC",
+  "author": "HDG",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.8",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mysql": "^2.18.1",
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
