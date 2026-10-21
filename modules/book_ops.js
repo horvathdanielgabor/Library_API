@@ -1,13 +1,12 @@
 const express = require('express');
 const router  = express.Router();
-const SHA1 = require('sha1');
 const { error } = require('winston');
 const db = require('../utils/database.js');
 
 router.get('/', (req, res) =>{
     db.query('SELECT * FROM books',(err, results) => {
         if (err){
-            return res.status(500).json({ error: err.error });
+            return res.status(500).json({ error: "[SELECT] Database query error"+err });
         }
 
         return res.status(200).json(results);
@@ -27,7 +26,7 @@ router.get('/:id', (req, res) => {
         }
 
         if (results.lenght == 0){
-            return res.status(404).json({ error: "Ilyen könyv nem létezik!" });
+            return res.status(400).json({ error: "Ilyen könyv nem létezik!" });
         }
 
         return res.status(200).json(results);
@@ -44,8 +43,7 @@ router.post('/', (req, res) => {
     let authorIdx = fields.indexOf('author');
     let categoryIdx = fields.indexOf('category');
     let publish_yearIdx = fields.indexOf('publish_year');
-    let availableIdx = fields.indexOf('available');
-    if (titleIdx < 0 || authorIdx < 0 || categoryIdx < 0 || publish_yearIdx < 0 || availableIdx < 0){
+    if (titleIdx < 0 || authorIdx < 0 || categoryIdx < 0 || publish_yearIdx < 0){
         return res.status(400).json({ error: 'Missing required fields!' });
     }
 
@@ -58,7 +56,7 @@ router.post('/', (req, res) => {
         {
             for (const result of results) {
                 if (result.author == values[authorIdx] && result.title == values[titleIdx] && result.category == values[categoryIdx] && result.publish_year == values[publish_yearIdx] && result.available == values[availableIdx]){
-                    return res.status(404).json({ error: "Ilyen könyv már létezik!" });
+                    return res.status(400).json({ error: "Ilyen könyv már létezik!" });
                 }
             }
         }
@@ -97,14 +95,14 @@ router.put('/:id', (req, res) => {
         }
 
         if (results.lenght == 0){
-                return res.status(404).json({ error: "Ilyen könyv nem létezik!" });
+                return res.status(400).json({ error: "Ilyen könyv nem létezik!" });
             }
 
         for (const result of results) {
             if (result.ID != id)
             {
                 if (result.author == values[authorIdx] && result.title == values[titleIdx] && result.category == values[categoryIdx] && result.publish_year == values[publish_yearIdx] && result.available == values[availableIdx]){
-                    return res.status(404).json({ error: "Ilyen könyv már létezik!" });
+                    return res.status(400).json({ error: "Ilyen könyv már létezik!" });
                 }
             }
         }
@@ -115,7 +113,7 @@ router.put('/:id', (req, res) => {
             }
 
             if (results.lenght == 0){
-                return res.status(404).json({ error: "Ilyen könyv nem létezik!" });
+                return res.status(400).json({ error: "Ilyen könyv nem létezik!" });
             }
 
             if (results[0].author == values[authorIdx] && results[0].title == values[titleIdx] && results[0].category == values[categoryIdx] && results[0].publish_year == values[publish_yearIdx] && results[0].available == values[availableIdx]){
@@ -128,7 +126,7 @@ router.put('/:id', (req, res) => {
                 if (err){
                     return res.status(500).json({ error: err.error });
                 }
-                return res.status(201).json({ message: 'Könyv sikeresen hozzáadva.', id: results[0].id });
+                return res.status(201).json({ message: 'Könyv adatai sikeresen változtatva.', id: results[0].id });
             });
         });
     });
@@ -147,11 +145,19 @@ router.delete('/:id', (req, res) => {
         }
 
         if (results.lenght > 0){
-            return res.status(404).json({ error: "Ezt a könyv még ki van bérelve!" });
+            return res.status(400).json({ error: "Ezt a könyv még ki van bérelve!" });
         }
 
         db.query('DELETE FROM books WHERE ID=?', [id],(err, results) => {
-            
+            if (err){
+                return res.status(500).json({ error: err.error });
+            }
+
+            if (results.affectedRows == 1){
+                return res.status(200).json({message: 'Könyv sikeres törlése!'});
+            }
+
+            return res.status(200).json({message: 'No deletion occured'});
         });
     });
 });

@@ -1,0 +1,39 @@
+@host= http://localhost
+@port= 4444
+@server= {{host}}:{{port}}
+
+### get all books
+GET {{server}}/api/books
+Content-Type: application/json
+
+### get book by id
+GET {{server}}/api/books/1
+Content-Type: application/json
+
+###Add a new book
+POST {{server}}/api/books
+Content-Type: application/json
+
+{
+    "title":"Star Wars: From the Adventures of Luke Skywalker",
+    "author":"George Lucas",
+    "category" :"Sci-Fi",
+    "publishYear":1976
+}
+
+### update book by id
+put {{server}}/api/books/13
+Content-Type: application/json
+
+{
+    "title":"Star Wars: From the Adventures of Luke Skywalker",
+    "author":"George Lucas",
+    "category" :"Sci-Fi",
+    "publishYear":1976,
+    "available":1
+}
+
+### delete 1 book by id if no loan
+DELETE {{server}}/api/books/2
+Content-Type: application/json
+ 
